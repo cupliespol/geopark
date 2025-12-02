@@ -1,0 +1,28 @@
+name: Gmail API via WIF
+on:
+  push:
+    branches: [ main ]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  gmail:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        token_format: access_token
+        workload_identity_provider: "projects/605562777596/locations/global/workloadIdentityPools/geopark-pool/providers/github-provider"
+        service_account: "geopark-sa@ornate-ensign-480013-s3.iam.gserviceaccount.com"
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    - name: Install dependencies
+      run: |
+        pip install google-auth google-auth-oauthlib google-api-python-client
+    - name: Run Gmail script
+      run: python gmail_test.py
